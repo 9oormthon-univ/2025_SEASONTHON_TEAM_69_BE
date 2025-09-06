@@ -15,6 +15,7 @@ public class RecordRequestDto {
     private String title;
     private String diaryContent;
     private String thumbnailImage;
+    private String gender;
 
     private KakaoProfileDto kakaoProfile;
 
