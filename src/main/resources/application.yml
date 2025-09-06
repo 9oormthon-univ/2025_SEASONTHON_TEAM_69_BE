@@ -2,10 +2,13 @@ spring:
   application:
     name: hackathon
   datasource:
-    url: jdbc:mysql://test.cf4yook02s9r.ap-northeast-2.rds.amazonaws.com:3306/hackathon?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: ${DB_URL}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: admin
-    password: rnfmaxhs1!
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      # 풀에 잡히는 모든 커넥션이 KST 세션으로 시작
+      connectionInitSql: SET time_zone = '+09:00'
   jpa:
     hibernate:
       ddl-auto: update
@@ -13,6 +16,10 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
+        # Hibernate가 JDBC 바인딩/언바인딩할 때도 KST로
+        jdbc.time_zone: Asia/Seoul
+  jackson:
+    time-zone: Asia/Seoul
 
 app:
   jwt:
@@ -27,6 +34,14 @@ server:
 
 kakao:
   userinfo-uri: "https://kapi.kakao.com/v2/user/me"
+
+ollama:
+  base-url: ${OLLAMA_BASE_URL}
+  model: ${OLLAMA_MODEL}
+
+s3:
+  bucket: ${S3_BUCKET_NAME}
+  region: ${AWS_REGION}
 
 #카카오 소셜 로그인 과정에서 액세스 토큰으로 사용자 정보를 조회할 때 쓰는 REST API 엔드포인트.
 #

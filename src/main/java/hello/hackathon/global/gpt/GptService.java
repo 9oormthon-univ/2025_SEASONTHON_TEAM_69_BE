@@ -18,10 +18,10 @@ public class GptService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${openai.api.url}")
+    //@Value("${ollama.base-url}")
     private String apiUrl;
 
-    @Value("${openai.api.key}")
+    //@Value("${openai.api.key}")
     private String apiKey;
 
     // 위로 메시지 생성용
