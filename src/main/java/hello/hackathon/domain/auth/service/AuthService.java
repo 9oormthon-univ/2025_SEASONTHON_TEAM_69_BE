@@ -82,6 +82,13 @@ public class AuthService {
         }
         else{
             userEntity = optional.get().getUserEntity();
+            //만료된 RT 삭제
+            refreshTokens.deleteByUserEntityAndExpiresAtBefore(userEntity, Instant.now());
+            //기존 활성 RT 전부 revoke → 단일 활성 정책
+            Instant now = Instant.now();
+            refreshTokens.findAllByUserEntityAndRevokedAtIsNullAndExpiresAtAfter(userEntity, now)
+                    .forEach(rt -> { rt.revoke(now); refreshTokens.save(rt); });
+
         }
 
         String accessToken = tokenService.createAccess(userEntity.getId(), userEntity.getEmail(), userEntity.getNickname());
@@ -179,7 +186,7 @@ public class AuthService {
         users.findById(userId).ifPresent(u -> {
             if (refreshToken != null && !refreshToken.isBlank()) {
                 // 이 기기 RT만 정확히 revoke
-                refreshTokens.findByTokenAndUserEntity(refreshToken, u)
+                refreshTokens.findByTokenAndUserEntity(sha256(refreshToken), u)
                         .ifPresent(rt -> { rt.revoke(Instant.now()); refreshTokens.save(rt); });
                 return;
             }
