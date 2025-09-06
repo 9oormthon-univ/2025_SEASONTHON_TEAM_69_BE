@@ -18,4 +18,7 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken,Long>
     List<RefreshToken> findAllByUserEntityAndRevokedAtIsNullAndExpiresAtAfter(UserEntity user, Instant now);
 
     long deleteByUserEntityAndExpiresAtBefore(UserEntity user, Instant time);
+
+    //만료된 RefreshToken 삭제용 - 삭제된 개수 반환
+    long deleteByExpiresAtBefore(Instant time);
 }
