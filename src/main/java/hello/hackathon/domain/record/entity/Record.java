@@ -31,6 +31,8 @@ public class Record {
 
     private String voiceUrl;
 
+    private String videoUrl; // 🆕 영상 URL 저장
+
     @Enumerated(EnumType.STRING)
     private EmotionType emotionType;
 
