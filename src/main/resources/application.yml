@@ -2,7 +2,7 @@ spring:
   application:
     name: hackathon
   datasource:
-    url: jdbc:mysql://test.cf4yook02s9r.ap-northeast-2.rds.amazonaws.com:3306/hackathon?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://test.cf4yook02s9r.ap-northeast-2.rds.amazonaws.com:3306/hackathon?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: admin
     password: rnfmaxhs1!
@@ -27,6 +27,10 @@ server:
 
 kakao:
   userinfo-uri: "https://kapi.kakao.com/v2/user/me"
+
+ollama:
+  base-url: http://43.203.163.169:11434
+  model: bllossom8b
 
 #카카오 소셜 로그인 과정에서 액세스 토큰으로 사용자 정보를 조회할 때 쓰는 REST API 엔드포인트.
 #
