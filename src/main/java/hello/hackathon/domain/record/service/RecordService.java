@@ -1,15 +1,15 @@
 package hello.hackathon.domain.record.service;
 
-import hello.hackathon.domain.auth.dto.KakaoProfileDto;
 import hello.hackathon.domain.record.dto.RecordRequestDto;
 import hello.hackathon.domain.record.dto.RecordResponseDto;
 import hello.hackathon.domain.record.entity.Record;
 import hello.hackathon.domain.record.entity.enums.EmotionType;
 import hello.hackathon.domain.record.repository.RecordRepository;
-import hello.hackathon.global.gpt.GptService;
-import hello.hackathon.global.gpt.LlamaService;
-import hello.hackathon.global.tts.TtsService;
 import hello.hackathon.global.emotion.EmotionAnalyzerService;
+import hello.hackathon.global.gpt.GptService;
+import hello.hackathon.global.tts.TtsRequest;
+import hello.hackathon.global.tts.TtsResponse;
+import hello.hackathon.global.tts.TtsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,30 +23,26 @@ public class RecordService {
 
     private final RecordRepository recordRepository;
     private final GptService gptService;
-    private final LlamaService llamaService;
     private final TtsService ttsService;
     private final EmotionAnalyzerService emotionAnalyzerService;
 
     // 기록 생성
     public RecordResponseDto createRecord(RecordRequestDto requestDto) {
         String diary = requestDto.getDiaryContent();
-        String username = (requestDto.getKakaoProfile() != null &&
-                requestDto.getKakaoProfile().getNickname() != null &&
-                !requestDto.getKakaoProfile().getNickname().isBlank())
-                ? requestDto.getKakaoProfile().getNickname().trim()
-                : "친구";
 
         EmotionType emotionType = emotionAnalyzerService.analyze(diary);
-        //String feedback = gptService.generateFeedback(diary);
-        String feedback = llamaService.chatWithPrompt(diary, username);
+        String feedback = gptService.generateFeedback(diary);
 
-        String gender = requestDto.getGender();
-        String voice = (gender != null && gender.equalsIgnoreCase("male"))
-                ? "ko-KR-Chirp3-HD-alnilam"
-                : "ko-KR-Chirp3-HD-despina";
-        double rate = 1.0;
-        double pitch = 0.0;
-        String voiceUrl = ttsService.generateVoiceUrl(feedback, voice, rate, pitch);
+        // ✅ TTS 요청 생성
+        TtsRequest ttsRequest = TtsRequest.builder()
+                .text(feedback)
+                .gender(requestDto.getGender())
+                .rate(1.0)
+                .pitch(0.0)
+                .build();
+
+        TtsResponse ttsResponse = ttsService.generateVoiceUrl(ttsRequest);
+        String voiceUrl = ttsResponse.getVoiceUrl();
 
         String thumbnail = generateThumbnail(emotionType.name());
 
@@ -56,6 +52,7 @@ public class RecordService {
                 .diaryContent(diary)
                 .feedbackContent(feedback)
                 .voiceUrl(voiceUrl)
+                .videoUrl(requestDto.getVideoUrl()) // 프론트에서 넘어오는 영상 URL도 저장
                 .emotionType(emotionType)
                 .thumbnailImage(thumbnail)
                 .createdAt(LocalDateTime.now())
