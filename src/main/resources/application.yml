@@ -19,6 +19,10 @@ app:
     access-ttl-seconds: 900
     refresh-ttl-seconds: 1209600
 
+server:
+  port: 8080
+  address: 0.0.0.0
+
 kakao:
   userinfo-uri: "https://kapi.kakao.com/v2/user/me"
 
