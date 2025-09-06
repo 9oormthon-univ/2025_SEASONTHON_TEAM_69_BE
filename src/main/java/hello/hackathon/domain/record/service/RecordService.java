@@ -39,7 +39,15 @@ public class RecordService {
         EmotionType emotionType = emotionAnalyzerService.analyze(diary);
         //String feedback = gptService.generateFeedback(diary);
         String feedback = llamaService.chatWithPrompt(diary, username);
-        String voiceUrl = ttsService.generateVoiceUrl(feedback);
+
+        String gender = requestDto.getGender();
+        String voice = (gender != null && gender.equalsIgnoreCase("male"))
+                ? "ko-KR-Chirp3-HD-alnilam"
+                : "ko-KR-Chirp3-HD-despina";
+        double rate = 1.0;
+        double pitch = 0.0;
+        String voiceUrl = ttsService.generateVoiceUrl(feedback, voice, rate, pitch);
+
         String thumbnail = generateThumbnail(emotionType.name());
 
         Record record = Record.builder()
