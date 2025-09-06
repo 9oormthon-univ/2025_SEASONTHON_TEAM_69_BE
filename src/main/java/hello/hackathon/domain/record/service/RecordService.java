@@ -1,11 +1,13 @@
 package hello.hackathon.domain.record.service;
 
+import hello.hackathon.domain.auth.dto.KakaoProfileDto;
 import hello.hackathon.domain.record.dto.RecordRequestDto;
 import hello.hackathon.domain.record.dto.RecordResponseDto;
 import hello.hackathon.domain.record.entity.Record;
 import hello.hackathon.domain.record.entity.enums.EmotionType;
 import hello.hackathon.domain.record.repository.RecordRepository;
 import hello.hackathon.global.gpt.GptService;
+import hello.hackathon.global.gpt.LlamaService;
 import hello.hackathon.global.tts.TtsService;
 import hello.hackathon.global.emotion.EmotionAnalyzerService;
 import lombok.RequiredArgsConstructor;
@@ -21,15 +23,22 @@ public class RecordService {
 
     private final RecordRepository recordRepository;
     private final GptService gptService;
+    private final LlamaService llamaService;
     private final TtsService ttsService;
     private final EmotionAnalyzerService emotionAnalyzerService;
 
     // 기록 생성
     public RecordResponseDto createRecord(RecordRequestDto requestDto) {
         String diary = requestDto.getDiaryContent();
+        String username = (requestDto.getKakaoProfile() != null &&
+                requestDto.getKakaoProfile().getNickname() != null &&
+                !requestDto.getKakaoProfile().getNickname().isBlank())
+                ? requestDto.getKakaoProfile().getNickname().trim()
+                : "친구";
 
         EmotionType emotionType = emotionAnalyzerService.analyze(diary);
-        String feedback = gptService.generateFeedback(diary);
+        //String feedback = gptService.generateFeedback(diary);
+        String feedback = llamaService.chatWithPrompt(diary, username);
         String voiceUrl = ttsService.generateVoiceUrl(feedback);
         String thumbnail = generateThumbnail(emotionType.name());
 
