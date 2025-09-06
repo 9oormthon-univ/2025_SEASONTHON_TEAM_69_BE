@@ -4,10 +4,12 @@ import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
 import hello.hackathon.global.s3.S3Uploader;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TtsService {
@@ -16,7 +18,8 @@ public class TtsService {
 
     public TtsResponse generateVoiceUrl(TtsRequest request) {
         String voiceName = selectVoiceByGender(request.getGender());
-        System.out.println("🎙 사용하는 voiceName = " + voiceName);
+        log.info("🎙 사용하는 voiceName = {}", voiceName);
+//        System.out.println("🎙 사용하는 voiceName = " + voiceName);
 
         try (TextToSpeechClient textToSpeechClient = TextToSpeechClient.create()) {
 
