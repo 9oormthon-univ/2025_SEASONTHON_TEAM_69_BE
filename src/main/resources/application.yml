@@ -64,3 +64,4 @@ openai:
 
 logging.level:
   org.hibernate.sql: debug
+  hello.hackathon: debug
