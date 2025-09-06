@@ -7,6 +7,7 @@ import hello.hackathon.domain.record.entity.enums.EmotionType;
 import hello.hackathon.domain.record.repository.RecordRepository;
 import hello.hackathon.global.emotion.EmotionAnalyzerService;
 import hello.hackathon.global.gpt.GptService;
+import hello.hackathon.global.gpt.LlamaService;
 import hello.hackathon.global.tts.TtsRequest;
 import hello.hackathon.global.tts.TtsResponse;
 import hello.hackathon.global.tts.TtsService;
@@ -23,17 +24,20 @@ public class RecordService {
 
     private final RecordRepository recordRepository;
     private final GptService gptService;
+    private final LlamaService llamaService;
     private final TtsService ttsService;
     private final EmotionAnalyzerService emotionAnalyzerService;
 
     // 기록 생성
     public RecordResponseDto createRecord(RecordRequestDto requestDto) {
         String diary = requestDto.getDiaryContent();
+        // String username = "친구";
+
 
         EmotionType emotionType = emotionAnalyzerService.analyze(diary);
-        String feedback = gptService.generateFeedback(diary);
+        String feedback = llamaService.chatWithPrompt(diary, null);
 
-        // TTS 요청 생성
+        // ✅ TTS 요청 생성
         TtsRequest ttsRequest = TtsRequest.builder()
                 .text(feedback)
                 .gender(requestDto.getGender())

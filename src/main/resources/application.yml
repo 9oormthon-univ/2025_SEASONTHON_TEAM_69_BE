@@ -9,6 +9,13 @@ spring:
     hikari:
       # 풀에 잡히는 모든 커넥션이 KST 세션으로 시작
       connectionInitSql: SET time_zone = '+09:00'
+  # 추가
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB       # 파일 1개 최대
+      max-request-size: 60MB
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -40,6 +47,10 @@ app:
 server:
   port: 8080
   address: 0.0.0.0
+  # 추가
+  tomcat:
+    max-http-form-post-size: -1   # -1은 무제한
+    max-swallow-size: -1
 
 kakao:
   userinfo-uri: "https://kapi.kakao.com/v2/user/me"
