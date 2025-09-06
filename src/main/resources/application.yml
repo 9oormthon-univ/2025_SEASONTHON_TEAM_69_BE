@@ -2,15 +2,17 @@ spring:
   application:
     name: hackathon
   datasource:
-    url: jdbc:h2:tcp://localhost/~/kakaotest
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:mysql://test.cf4yook02s9r.ap-northeast-2.rds.amazonaws.com:3306/hackathon?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: admin
+    password: rnfmaxhs1!
   jpa:
     hibernate:
       ddl-auto: update
     properties:
-      hibernate.format_sql: true
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
 
 app:
   jwt:
