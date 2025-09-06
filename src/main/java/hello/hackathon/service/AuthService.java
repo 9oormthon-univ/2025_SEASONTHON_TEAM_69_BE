@@ -6,8 +6,10 @@ import hello.hackathon.domain.RefreshToken;
 import hello.hackathon.domain.SocialAccount;
 import hello.hackathon.domain.SocialProvider;
 import hello.hackathon.domain.UserEntity;
+import hello.hackathon.dto.AccessTokenResponse;
 import hello.hackathon.dto.KakaoProfileDto;
 import hello.hackathon.dto.LoginResponse;
+import hello.hackathon.dto.RefreshTokenResponse;
 import hello.hackathon.repository.RefreshTokenRepository;
 import hello.hackathon.repository.SocialAccountRepository;
 import hello.hackathon.repository.UserEntityRepository;
@@ -115,7 +117,7 @@ public class AuthService {
     }
 
     //액세스 토큰만 재발급 하는 로직
-    public Map<String,Object> reissueAccessToken(String refreshToken){
+    public AccessTokenResponse reissueAccessToken(String refreshToken){
         if(refreshToken==null || refreshToken.isBlank()){
             throw new ResponseStatusException(UNAUTHORIZED,"invalid refresh token");
         }
@@ -135,14 +137,11 @@ public class AuthService {
         //새 Access Token 발급
         String newAccessToken = tokenService.createAccess(userEntity.getId(), userEntity.getEmail(), userEntity.getNickname());
 
-        return Map.of(
-                "accessToken",newAccessToken,
-                "accessTtlSec",jwtConfig.getAccessTtlSeconds()
-        );
+        return new AccessTokenResponse(newAccessToken, jwtConfig.getAccessTtlSeconds());
     }
 
     //리프레시 토큰 재발급 로직 -> 동시에 액세스 토큰도 재발급
-    public Map<String,Object> refresh(String refreshToken){
+    public RefreshTokenResponse refresh(String refreshToken){
         if(refreshToken==null || refreshToken.isBlank()){
             throw new ResponseStatusException(UNAUTHORIZED,"invalid refresh token");
         }
@@ -170,12 +169,8 @@ public class AuthService {
                 .issuedAt(Instant.now())
                 .expiresAt(Instant.now().plusSeconds(jwtConfig.getRefreshTtlSeconds()))
                 .build());
-        return Map.of(
-                "accessToken",newAccessToken,
-                "refreshToken",newRefreshToken,
-                "accessTtlSec",jwtConfig.getAccessTtlSeconds(),
-                "refreshTtlSec",jwtConfig.getRefreshTtlSeconds()
-        );
+
+        return new RefreshTokenResponse(newAccessToken,newRefreshToken,jwtConfig.getAccessTtlSeconds(), jwtConfig.getRefreshTtlSeconds());
     }
     //로그아웃 시 리프레시 토큰 만료
     public Map<String,String> logout(Long userId){

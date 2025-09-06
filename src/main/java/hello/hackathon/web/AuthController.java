@@ -1,10 +1,11 @@
 package hello.hackathon.web;
 
+import hello.hackathon.dto.AccessTokenResponse;
 import hello.hackathon.dto.LoginResponse;
+import hello.hackathon.dto.RefreshTokenResponse;
 import hello.hackathon.service.AuthService;
 import hello.hackathon.service.TokenService;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -42,8 +43,8 @@ public class AuthController {
     //Refresh Token 재발급(회전): 새 AT + 새 RT 발급 (기존 RT는 회전 처리)
     public record RefreshRequest(@NotBlank String refreshToken) {}
     @PostMapping("/token/refresh")
-    public ResponseEntity<Map<String,Object>> refresh(@Valid @RequestBody AuthController.RefreshRequest body){
-        Map<String,Object> pair = authService.refresh(body.refreshToken());
+    public ResponseEntity<RefreshTokenResponse> refresh(@Valid @RequestBody AuthController.RefreshRequest body){
+        RefreshTokenResponse pair = authService.refresh(body.refreshToken());
         // pair = { accessToken, refreshToken, accessTtlSec, refreshTtlSec }
         return ResponseEntity.ok(pair);
     }
@@ -52,8 +53,8 @@ public class AuthController {
     //AT만 재발급: RT는 그대로 유지 (무회전)
     public record AccessRequest(@NotBlank String refreshToken) {}
     @PostMapping("/token/access")
-    public ResponseEntity<Map<String,Object>> reissue(@Valid @RequestBody AccessRequest body){
-        Map<String,Object> out = authService.reissueAccessToken(body.refreshToken());
+    public ResponseEntity<AccessTokenResponse> reissue(@Valid @RequestBody AccessRequest body){
+        AccessTokenResponse out = authService.reissueAccessToken(body.refreshToken());
         // out = { accessToken, accessTtlSec }
         return ResponseEntity.ok(out);
     }
