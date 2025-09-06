@@ -23,8 +23,8 @@ public class RecordResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
     private String thumbnailImage;
+    private String videoUrl;
 
-    // Entity → DTO 변환
     public static RecordResponseDto fromEntity(Record record) {
         return RecordResponseDto.builder()
                 .id(record.getId())
@@ -37,6 +37,7 @@ public class RecordResponseDto {
                 .createdAt(record.getCreatedAt())
                 .deletedAt(record.getDeletedAt())
                 .thumbnailImage(record.getThumbnailImage())
+                .videoUrl(record.getVideoUrl())
                 .build();
     }
 }
