@@ -1,4 +1,4 @@
-package hello.hackathon.service;
+package hello.hackathon.domain.auth.service;
 
 import hello.hackathon.config.JwtConfig;
 import io.jsonwebtoken.Claims;

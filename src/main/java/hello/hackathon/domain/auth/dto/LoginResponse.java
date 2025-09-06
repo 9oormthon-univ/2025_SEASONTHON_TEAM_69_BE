@@ -1,4 +1,4 @@
-package hello.hackathon.dto;
+package hello.hackathon.domain.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

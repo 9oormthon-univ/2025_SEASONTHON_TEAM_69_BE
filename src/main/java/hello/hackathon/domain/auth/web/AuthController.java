@@ -1,10 +1,10 @@
-package hello.hackathon.web;
+package hello.hackathon.domain.auth.web;
 
-import hello.hackathon.dto.AccessTokenResponse;
-import hello.hackathon.dto.LoginResponse;
-import hello.hackathon.dto.RefreshTokenResponse;
-import hello.hackathon.service.AuthService;
-import hello.hackathon.service.TokenService;
+import hello.hackathon.domain.auth.dto.AccessTokenResponse;
+import hello.hackathon.domain.auth.dto.LoginResponse;
+import hello.hackathon.domain.auth.dto.RefreshTokenResponse;
+import hello.hackathon.domain.auth.service.AuthService;
+import hello.hackathon.domain.auth.service.TokenService;
 import io.jsonwebtoken.Claims;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -15,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Map;
 
 //로그인 관련 컨트롤러
 //해커톤에서 구현의 편리함을 위해, 프런트에서 인증 서버에서 Access Token을 받아서 백엔드로 넘겨준다.

@@ -1,4 +1,4 @@
-package hello.hackathon.domain;
+package hello.hackathon.domain.auth.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

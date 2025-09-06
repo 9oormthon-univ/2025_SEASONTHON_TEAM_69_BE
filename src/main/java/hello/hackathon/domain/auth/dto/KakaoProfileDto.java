@@ -1,4 +1,4 @@
-package hello.hackathon.dto;
+package hello.hackathon.domain.auth.dto;
 
 import lombok.Data;
 

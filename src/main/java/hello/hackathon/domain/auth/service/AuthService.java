@@ -1,18 +1,18 @@
-package hello.hackathon.service;
+package hello.hackathon.domain.auth.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import hello.hackathon.config.JwtConfig;
-import hello.hackathon.domain.RefreshToken;
-import hello.hackathon.domain.SocialAccount;
-import hello.hackathon.domain.SocialProvider;
-import hello.hackathon.domain.UserEntity;
-import hello.hackathon.dto.AccessTokenResponse;
-import hello.hackathon.dto.KakaoProfileDto;
-import hello.hackathon.dto.LoginResponse;
-import hello.hackathon.dto.RefreshTokenResponse;
-import hello.hackathon.repository.RefreshTokenRepository;
-import hello.hackathon.repository.SocialAccountRepository;
-import hello.hackathon.repository.UserEntityRepository;
+import hello.hackathon.domain.auth.entity.RefreshToken;
+import hello.hackathon.domain.auth.entity.SocialAccount;
+import hello.hackathon.domain.auth.entity.SocialProvider;
+import hello.hackathon.domain.auth.entity.UserEntity;
+import hello.hackathon.domain.auth.dto.AccessTokenResponse;
+import hello.hackathon.domain.auth.dto.KakaoProfileDto;
+import hello.hackathon.domain.auth.dto.LoginResponse;
+import hello.hackathon.domain.auth.dto.RefreshTokenResponse;
+import hello.hackathon.domain.auth.repository.RefreshTokenRepository;
+import hello.hackathon.domain.auth.repository.SocialAccountRepository;
+import hello.hackathon.domain.auth.repository.UserEntityRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +30,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Instant;
 import java.util.HexFormat;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
