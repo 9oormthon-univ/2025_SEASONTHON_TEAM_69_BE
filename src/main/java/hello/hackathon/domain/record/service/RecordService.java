@@ -33,7 +33,7 @@ public class RecordService {
         EmotionType emotionType = emotionAnalyzerService.analyze(diary);
         String feedback = gptService.generateFeedback(diary);
 
-        // ✅ TTS 요청 생성
+        // TTS 요청 생성
         TtsRequest ttsRequest = TtsRequest.builder()
                 .text(feedback)
                 .gender(requestDto.getGender())
