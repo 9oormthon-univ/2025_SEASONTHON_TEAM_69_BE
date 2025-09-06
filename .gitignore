@@ -36,3 +36,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+.env
+
+### 🚨 Important: exclude sensitive configs ###
+src/main/resources/application.yml
+src/main/resources/application-*.yml
