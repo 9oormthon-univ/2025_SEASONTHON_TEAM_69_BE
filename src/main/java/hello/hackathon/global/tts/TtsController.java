@@ -12,14 +12,9 @@ public class TtsController {
     private final TtsService ttsService;
 
     @PostMapping
-    public ResponseEntity<String> generateVoice(@RequestBody TtsRequest request) {
-        String s3Url = ttsService.generateVoiceUrl(
-                request.getText(),
-                request.getGender(),
-                request.getRate(),
-                request.getPitch()
-        );
+    public ResponseEntity<TtsResponse> generateVoice(@RequestBody TtsRequest request) {
+        TtsResponse response = ttsService.generateVoiceUrl(request);
 
-        return ResponseEntity.ok(s3Url);
+        return ResponseEntity.ok(response);
     }
 }
