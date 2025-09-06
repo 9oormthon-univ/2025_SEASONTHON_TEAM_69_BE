@@ -43,6 +43,12 @@ s3:
   bucket: ${S3_BUCKET_NAME}
   region: ${AWS_REGION}
 
+openai:
+  api:
+    url: ${OPENAI_API_URL:https://api.openai.com/v1/chat/completions}
+    key: ${OPENAI_API_KEY:dummy}
+
+
 #카카오 소셜 로그인 과정에서 액세스 토큰으로 사용자 정보를 조회할 때 쓰는 REST API 엔드포인트.
 #
 #구현 플로우 예시
