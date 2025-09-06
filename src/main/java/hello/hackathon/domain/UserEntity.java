@@ -21,11 +21,11 @@ public class UserEntity extends BaseTime{
     private String nickname;
     //카카오 소셜 로그인만 활성화할거라 password 필요 없음.
 
-    // [추가] 프로필 이미지(링크로 저장 권장; BLOB 비권장)
+    // [추가] 카카오 프로필 이미지(링크로 저장)
     @Column(length = 1024)
     private String profileImageUrl;
 
-    // [추가] 썸네일(옵션)
+    // [추가] 카카오 썸네일(옵션)
     @Column(length = 1024)
     private String thumbnailImageUrl;
 }
