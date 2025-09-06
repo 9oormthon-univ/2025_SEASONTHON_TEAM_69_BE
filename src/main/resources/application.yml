@@ -6,6 +6,9 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+    hikari:
+      # 풀에 잡히는 모든 커넥션이 KST 세션으로 시작
+      connectionInitSql: SET time_zone = '+09:00'
   jpa:
     hibernate:
       ddl-auto: update
@@ -13,6 +16,10 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
+        # Hibernate가 JDBC 바인딩/언바인딩할 때도 KST로
+        jdbc.time_zone: Asia/Seoul
+  jackson:
+    time-zone: Asia/Seoul
 
 app:
   jwt:

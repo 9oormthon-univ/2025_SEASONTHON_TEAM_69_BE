@@ -24,9 +24,13 @@ public class RefreshToken {
     private UserEntity userEntity;
 
     private String token; //당연히 해시된 상태
+    @Column(columnDefinition = "timestamp")
     private Instant issuedAt;
+    @Column(columnDefinition = "timestamp")
     private Instant expiresAt;
+    @Column(columnDefinition = "timestamp")
     private Instant revokedAt; // 로그아웃/강제폐기 시
+    @Column(columnDefinition = "timestamp")
     private Instant rotatedAt; //회전 시
 
     public void revoke(Instant instant){
