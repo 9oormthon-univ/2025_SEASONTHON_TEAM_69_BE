@@ -59,11 +59,16 @@ public class AuthController {
         return ResponseEntity.ok(out);
     }
 
+    public record LogoutRequest(String refreshToken) {}
     //로그아웃 - 액세스 토큰을 받은 뒤, 가장 최근에 발급된 리프레시 토큰도 폐기
     @PostMapping("/logout")
-    public ResponseEntity<Map<String,String>> logout(@RequestHeader(HttpHeaders.AUTHORIZATION)String accessToken){
+    public ResponseEntity<Void> logout(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String accessToken,
+            @RequestBody(required = false) LogoutRequest body
+    ) {
         Long uid = uidFromAccessToken(accessToken);
-        return ResponseEntity.ok(authService.logout(uid));
+        authService.logout(uid, body != null ? body.refreshToken() : null);
+        return ResponseEntity.noContent().build(); // 204
     }
 
     private Long uidFromAccessToken(String accessToken) {

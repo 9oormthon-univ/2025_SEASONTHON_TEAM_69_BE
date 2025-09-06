@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -172,12 +173,22 @@ public class AuthService {
 
         return new RefreshTokenResponse(newAccessToken,newRefreshToken,jwtConfig.getAccessTtlSeconds(), jwtConfig.getRefreshTtlSeconds());
     }
+
     //로그아웃 시 리프레시 토큰 만료
-    public Map<String,String> logout(Long userId){
-        UserEntity u = users.findById(userId).orElseThrow(() -> new ResponseStatusException(UNAUTHORIZED, "user not found"));
-        refreshTokens.findTopByUserEntityOrderByIssuedAtDesc(u)
-                .ifPresent(refreshToken -> {refreshToken.revoke(Instant.now());refreshTokens.save(refreshToken);});
-        return Map.of("status","ok");
+    @Transactional
+    public void logout(Long userId, @Nullable String refreshToken) {
+        users.findById(userId).ifPresent(u -> {
+            if (refreshToken != null && !refreshToken.isBlank()) {
+                // 이 기기 RT만 정확히 revoke
+                refreshTokens.findByTokenAndUserEntity(refreshToken, u)
+                        .ifPresent(rt -> { rt.revoke(Instant.now()); refreshTokens.save(rt); });
+                return;
+            }
+            // 바디에 Refresh Token이 없으면: 가장 최근 1개의 RefreshToken을 revoke
+            refreshTokens.findTopByUserEntityOrderByIssuedAtDesc(u)
+                    .ifPresent(rt -> { rt.revoke(Instant.now()); refreshTokens.save(rt); });
+        });
+        // 유저가 없어도, 이미 revoke여도 예외 없이 종료
     }
 
     //JsonNode - DTO 없이도 중첩 JSON을 안전하게 한 줄로 뽑아내는 도구.

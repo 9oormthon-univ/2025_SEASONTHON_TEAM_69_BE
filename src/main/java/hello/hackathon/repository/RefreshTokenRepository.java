@@ -10,4 +10,6 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken,Long>
     Optional<RefreshToken> findTopByUserEntityOrderByIssuedAtDesc(UserEntity u);
 
     Optional<RefreshToken> findByUserEntityAndToken(UserEntity userEntity, String token);
+
+    Optional<RefreshToken> findByTokenAndUserEntity(String token, UserEntity user);
 }
