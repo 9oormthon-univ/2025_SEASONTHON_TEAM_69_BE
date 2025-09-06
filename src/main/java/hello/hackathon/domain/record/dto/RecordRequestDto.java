@@ -1,6 +1,5 @@
 package hello.hackathon.domain.record.dto;
 
-import hello.hackathon.domain.auth.dto.KakaoProfileDto;
 import hello.hackathon.domain.record.entity.Record;
 import lombok.*;
 
@@ -16,8 +15,7 @@ public class RecordRequestDto {
     private String diaryContent;
     private String thumbnailImage;
     private String gender;
-
-    private KakaoProfileDto kakaoProfile;
+    private String videoUrl;
 
     // DTO → Entity 변환
     public Record toEntity() {
@@ -26,6 +24,7 @@ public class RecordRequestDto {
                 .title(title)
                 .diaryContent(diaryContent)
                 .thumbnailImage(thumbnailImage)
+                .videoUrl(videoUrl)
                 .build();
     }
 }
