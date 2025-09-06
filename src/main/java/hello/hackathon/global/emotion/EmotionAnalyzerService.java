@@ -1,43 +1,62 @@
 package hello.hackathon.global.emotion;
 
 import hello.hackathon.domain.record.entity.enums.EmotionType;
-import hello.hackathon.global.gpt.GptService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class EmotionAnalyzerService {
 
-    private final GptService gptService;
+    private final @Qualifier("ollamaWebClient") WebClient webClient;
 
-    public EmotionType analyze(String diaryContent) {
-        // 프롬프트 구성
-        String prompt = buildPrompt(diaryContent);
+    @Value("${ollama.model}")
+    private String model;
 
-        // GPT 응답 (단답형 감정 이름 받아온다고 가정)
-        String result = gptService.ask(prompt).trim().toUpperCase();
+    public EmotionType analyze(String diaryText) {
+        String systemPrompt = """
+            너는 감정 분류기다.
+            한국어 일기를 보고 다음 라벨 중 정확히 하나만 대문자로 출력하라.
+            [HAPPY, SAD, ANGRY, NEUTRAL, ANXIOUS, EXCITED, LONELY]
+            라벨 이외의 추가 설명은 절대 하지 마라.
+        """;
 
         try {
-            return EmotionType.valueOf(result);
-        } catch (IllegalArgumentException e) {
-            // 못 알아들었으면 기본값 NEUTRAL
-            return EmotionType.NEUTRAL;
+            var body = Map.of(
+                    "model", model,
+                    "messages", List.of(
+                            Map.of("role", "system", "content", systemPrompt),
+                            Map.of("role", "user", "content", "일기:\n" + diaryText)
+                    ),
+                    "stream", false,
+                    "options", Map.of("temperature", 0)
+            );
+
+            Map<?, ?> resp = webClient.post()
+                    .uri("/api/chat")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(body)
+                    .retrieve()
+                    .bodyToMono(Map.class)
+                    .timeout(Duration.ofSeconds(60))
+                    .block();
+
+            // Ollama 응답에서 message.content 바로 가져오기
+            Map<?, ?> message = (Map<?, ?>) resp.get("message");
+            String content = (String) message.get("content");
+
+            return EmotionType.valueOf(content.trim().toUpperCase());
+
+        } catch (Exception e) {
+            return EmotionType.NEUTRAL; // 실패 시 기본값
         }
-    }
-
-    // 프롬프트 템플릿
-    private String buildPrompt(String diaryContent) {
-        return """
-                아래 일기 내용을 읽고 감정을 분석해줘.
-                감정은 아래 보기 중 하나로 단답형으로만 대답해.
-
-                [HAPPY, SAD, ANGRY, NEUTRAL, ANXIOUS, EXCITED, LONELY]
-
-                일기 내용:
-                %s
-
-                감정:
-                """.formatted(diaryContent);
     }
 }
